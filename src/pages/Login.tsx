@@ -1,12 +1,43 @@
-import { Grid, Paper, Box, Avatar, Typography, TextField, Button } from '@mui/material'
+import { Grid, Paper, Box, Avatar, Typography, TextField, Button } from '@mui/material';
 import EmojiPeopleIcon from '@mui/icons-material/EmojiPeople';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import data from '../Mock/users'; // Make sure the path is correct
 
 type Props = {}
 
 const Login = (props: Props) => {
+  const [message, setMessage] = useState<string | undefined>(undefined);
+  const navigate = useNavigate();
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    
+    const username = formData.get("username")! as string;
+    const password = formData.get("password")! as string;
+
+    if (username.length < 4) {
+      setMessage("Username must be at least 4 characters");
+      setTimeout(() => setMessage(undefined), 3000);
+      return;
+    }
+    if (password.length < 8) {
+      setMessage("Password must be at least 8 characters");
+      setTimeout(() => setMessage(undefined), 3000);
+      return;
+    }
+
+    if (username === data.username && password === data.password) {
+      navigate("/homepage");
+    } else {
+      setMessage("Invalid username or password");
+      setTimeout(() => setMessage(undefined), 3000);
+    }
+  };
+
   return (
     <Grid container component="main" sx={{ height: "100vh" }}>
-      {/* Left side for login */}
       <Grid
         item
         xs={12}
@@ -31,7 +62,12 @@ const Login = (props: Props) => {
           <Typography component="h1" variant="h5">
             Login
           </Typography>
-          <Box component="form" noValidate sx={{ mt: 1 }}>
+          <Box
+            component="form"
+            onSubmit={handleSubmit}
+            noValidate
+            sx={{ mt: 1, display: "flex", flexDirection: "column", alignItems: "center" }}
+          >
             <TextField
               margin="normal"
               required
@@ -41,6 +77,7 @@ const Login = (props: Props) => {
               name="username"
               autoComplete="username"
               autoFocus
+              sx={{ width: 381, height: 56 }}
             />
             <TextField
               margin="normal"
@@ -51,18 +88,32 @@ const Login = (props: Props) => {
               type="password"
               id="password"
               autoComplete="current-password"
+              sx={{ width: 381, height: 56 }}
             />
-            <Typography>
-              *สำหรับนักเรียน 
-              username จะเป็น รหัสนักศึกษา
-              รหัสผ่านจะเป็น วัน เดือน ปี
-              ตัวอย่าง 01052548
+
+            <Typography
+              sx={{
+                fontSize: "12px",
+                alignSelf: "flex-start",
+                ml: 1,
+                mt: 1,
+              }}
+            >
+              *สำหรับนักเรียน <br />
+              username คือ รหัสนักศึกษา <br />
+              password คือ วัน เดือน ปี ตัวอย่าง 01052548
             </Typography>
+
+            {message && (
+              <Typography sx={{ color: "red", mt: 2 }}>
+                {message}
+              </Typography>
+            )}
+
             <Button
               type="submit"
-              fullWidth
               variant="contained"
-              sx={{ mt: 3, mb: 2 }}
+              sx={{ mt: 3, mb: 2, width: 381 }}
             >
               Login
             </Button>
@@ -70,12 +121,15 @@ const Login = (props: Props) => {
         </Box>
       </Grid>
 
+
+
       {/* Right side with image and text */}
       <Grid
         item
         xs={false}
         sm={4}
         md={7}
+        maxWidth={860}
         sx={{
           backgroundColor: "#1565c0",
           display: "flex",
