@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import RouterApp from './RouterApp'
+import { CssBaseline } from '@mui/material'
 
 
 function App() {
@@ -7,6 +8,7 @@ function App() {
 
   return (
     <>
+    <CssBaseline/>
       <RouterApp />
     </>
   )
